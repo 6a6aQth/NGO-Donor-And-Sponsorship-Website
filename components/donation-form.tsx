@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { PaymentForm } from "@/components/payment-form"
 
 export function DonationForm() {
   return (
@@ -27,11 +28,13 @@ export function DonationForm() {
                 placeholder="Your message*"
                 className="bg-background border-border/50 min-h-[100px] resize-none"
               />
-              <Button className="w-full bg-primary hover:bg-primary/90 text-white h-12 text-base font-medium">
-                Donate Now
-              </Button>
+              <PaymentForm>
+                <Button className="w-full bg-primary hover:bg-primary/90 text-white h-12 text-base font-medium">
+                  Donate
+                </Button>
+              </PaymentForm>
               <p className="text-sm text-center text-muted-foreground">
-                Been here before? <span className="text-foreground font-medium">Start helping the poor</span>
+                Been here before? <span className="text-foreground font-medium">Continue supporting students</span>
               </p>
             </form>
           </div>

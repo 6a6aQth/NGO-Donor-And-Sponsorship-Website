@@ -7,14 +7,12 @@ export function Mission() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="font-bold mb-6 text-foreground text-balance text-5xl">
-              Help Us Create Brighter Futures for Orphaned Children.
+              Help Us Create Brighter Futures Through Education & Scholarships.
             </h2>
           </div>
           <div>
             <p className="text-muted-foreground leading-relaxed mb-6 text-xl">
-              Every child deserves a chance to thrive. Many face challenges like lack of education, inadequate medical
-              care, and lack of basic necessities. Support our mission to provide these opportunities and create lasting
-              change.
+              Every student deserves access to quality education. Many face financial barriers that prevent them from pursuing their academic dreams. Support our mission to provide scholarships, educational resources, and mentorship opportunities that create lasting change in students' lives.
             </p>
             <div className="flex gap-4">
               <Button className="bg-primary hover:bg-primary/90 text-white">Get Involved Now</Button>

@@ -1,9 +1,9 @@
 export function Statistics() {
   const stats = [
-    { number: "1,000", label: "Engagement", color: "text-[oklch(0.85_0.15_95)]" },
-    { number: "240", label: "Volunteers", color: "text-[oklch(0.62_0.12_200)]" },
-    { number: "$33M", label: "Amount Raised", color: "text-[oklch(0.70_0.12_150)]" },
-    { number: "123", label: "Country Impacted", color: "text-[oklch(0.65_0.18_25)]" },
+    { number: "50+", label: "Scholarships Awarded", color: "text-[oklch(0.85_0.15_95)]" },
+    { number: "500+", label: "Students Supported", color: "text-[oklch(0.62_0.12_200)]" },
+    { number: "$150K", label: "Funds Raised", color: "text-[oklch(0.70_0.12_150)]" },
+    { number: "15", label: "Partner Schools", color: "text-[oklch(0.65_0.18_25)]" },
   ]
 
   return (

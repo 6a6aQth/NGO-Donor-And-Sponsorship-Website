@@ -4,39 +4,39 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 export function Stories() {
   const testimonials = [
     {
-      text: "I've seen firsthand the impact of giving change for the knowing this. My contribution is helping to educate and empower a child is truly rewarding.",
+      text: "I've seen firsthand the impact of scholarships on students' lives. My contribution is helping to educate and empower deserving students, which is truly rewarding.",
       author: "Emily Chen",
-      role: "Monthly Donor",
+      role: "Scholarship Donor",
       avatar: "/woman-portrait.png",
     },
     {
-      text: "Volunteering at Care Nest has been a game-changer for me. Knowing that my contribution is helping to educate and empower children is incredibly fulfilling.",
+      text: "Volunteering at Chiyembekezo Scholar Foundation has been a game-changer for me. Knowing that my contribution is helping to educate and empower students through scholarships is incredibly fulfilling.",
       author: "David Kim",
-      role: "Volunteer",
+      role: "Education Volunteer",
       avatar: "/thoughtful-man-portrait.png",
     },
     {
-      text: "I'm a former orphan myself. I received help from Care Nest when I was a teenager and it changed my life. Now I'm able to give back.",
+      text: "I'm a former scholarship recipient myself. I received help from Chiyembekezo Scholar Foundation when I was a student and it changed my life. Now I'm able to give back.",
       author: "Sarah Wilson",
-      role: "Former Beneficiary",
+      role: "Scholarship Recipient",
       avatar: "/diverse-woman-smiling.png",
     },
     {
-      text: "Care Nest's transparency and dedication to being great advocates. I've been a donor for 5 years and I can see the difference my contributions make.",
+      text: "Chiyembekezo Scholar Foundation's transparency and dedication to education is remarkable. I've been a donor for 5 years and I can see the difference my contributions make in students' lives.",
       author: "Maria Garcia",
-      role: "Long-term Supporter",
+      role: "Education Supporter",
       avatar: "/professional-woman.png",
     },
     {
-      text: "Volunteering with Care Nest has been a life-changing experience. I've seen firsthand how donations translate into real opportunities for children.",
+      text: "Volunteering with Chiyembekezo Scholar Foundation has been a life-changing experience. I've seen firsthand how donations translate into real educational opportunities for students.",
       author: "James Martin",
-      role: "Volunteer Coordinator",
+      role: "Academic Mentor",
       avatar: "/smiling-man.png",
     },
     {
-      text: "I love working with Care Nest because they make it so easy to make a difference. Every dollar goes directly to helping children in need.",
+      text: "I love working with Chiyembekezo Scholar Foundation because they make it so easy to make a difference. Every dollar goes directly to helping students achieve their educational dreams.",
       author: "Lisa Anderson",
-      role: "Corporate Partner",
+      role: "Corporate Education Partner",
       avatar: "/business-woman.png",
     },
   ]

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { PaymentForm } from "@/components/payment-form"
 
 export function Hero() {
   return (
@@ -6,8 +7,8 @@ export function Hero() {
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/children-playing-together-black-and-white.jpg"
-          alt="Children playing"
+          src="/children-studying-classroom-black-and-white.jpg"
+          alt="Students studying"
           className="w-full h-full object-cover opacity-40 grayscale"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.25_0.01_240)]/80 to-[oklch(0.25_0.01_240)]/60" />
@@ -16,16 +17,18 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 text-balance">
-          Make a Difference for
+          Empowering Students Through
           <br />
-          Orphaned Children
+          Education & Scholarships
         </h1>
         <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-          Join us in creating brighter futures through education, healthcare, and compassionate support
+          Join us in creating brighter futures through quality education, scholarships, and academic support for deserving students
         </p>
-        <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-lg px-8 py-6">
-          Start Donating Now
-        </Button>
+        <PaymentForm>
+          <Button size="lg" className="bg-primary hover:bg-primary/90 text-white text-lg px-8 py-6">
+            Support Education Now
+          </Button>
+        </PaymentForm>
       </div>
     </section>
   )

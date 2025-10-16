@@ -12,9 +12,20 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "Chiyembekezo Scholar Foundation - Make a Difference for Orphaned Children",
-  description: "Help us create brighter futures for orphaned children through education, healthcare, and support.",
+  title: "Chiyembekezo Scholar Foundation - Supporting Education Through Scholarships",
+  description: "Empowering students through scholarships and educational sponsorships. Help us create brighter futures through quality education and academic support.",
   generator: "v0.app",
+  icons: {
+    icon: [
+      { url: "/favicon-large.png", sizes: "192x192", type: "image/png" },
+      { url: "/logo-removebg-preview.png", sizes: "64x64", type: "image/png" },
+      { url: "/logo-removebg-preview.png", sizes: "48x48", type: "image/png" },
+      { url: "/logo-removebg-preview.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon-large.png",
+    apple: "/favicon-large.png",
+  },
 }
 
 export default function RootLayout({

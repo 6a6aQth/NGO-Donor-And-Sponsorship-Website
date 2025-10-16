@@ -3,10 +3,9 @@ export function Empowerment() {
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 text-foreground">Empowering Bright Futures</h2>
+          <h2 className="text-5xl font-bold mb-4 text-foreground">Empowering Academic Excellence</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            In our quest for a better and more just world, the We Are Humanity Foundation is dedicated to compassion and
-            positive change.
+            In our quest for educational equity and opportunity, the Chiyembekezo Scholar Foundation is dedicated to supporting students and creating positive change through scholarships and mentorship.
           </p>
         </div>
 
@@ -48,8 +47,7 @@ export function Empowerment() {
             />
             <div className="bg-[oklch(0.25_0.01_240)] p-6 flex flex-col justify-center">
               <p className="text-sm leading-relaxed mb-3 text-white/90">
-                "Volunteering with Care Next has been a life-changing experience. Seeing the smiles on children's faces
-                makes every effort worthwhile."
+                "Volunteering with Chiyembekezo Scholar Foundation has been a life-changing experience. Seeing the smiles on students' faces when they receive scholarships makes every effort worthwhile."
               </p>
               <p className="text-xs text-white/70">By: Sarah Johnson</p>
             </div>

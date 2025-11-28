@@ -15,6 +15,8 @@ interface PaymentFormProps {
 
 export function PaymentForm({ children }: PaymentFormProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [paymentData, setPaymentData] = useState({
     amount: "",
     firstName: "",
@@ -61,11 +63,38 @@ export function PaymentForm({ children }: PaymentFormProps) {
     return 'unknown'
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Payment submitted:", paymentData)
-    // Simulate payment processing
-    setTimeout(() => {
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/donations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: paymentData.amount,
+          firstName: paymentData.firstName,
+          lastName: paymentData.lastName,
+          email: paymentData.email,
+          billingAddress: paymentData.billingAddress,
+          city: paymentData.city,
+          zipCode: paymentData.zipCode,
+          country: paymentData.country,
+          // Note: In production, card details should be processed through Stripe/PayPal
+          // and not sent to your server
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to process donation')
+      }
+
+      // Success - show success message
       alert("Payment successful! Thank you for supporting education.")
       setIsOpen(false)
       // Reset form
@@ -83,7 +112,12 @@ export function PaymentForm({ children }: PaymentFormProps) {
         zipCode: "",
         country: ""
       })
-    }, 2000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Donation error:', err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const cardType = getCardType(paymentData.cardNumber)
@@ -315,13 +349,20 @@ export function PaymentForm({ children }: PaymentFormProps) {
             </p>
           </Card>
 
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+
           {/* Submit Button */}
           <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-primary hover:bg-primary/90">
-              Donate ${paymentData.amount || '0'}
+            <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting}>
+              {isSubmitting ? 'Processing...' : `Donate $${paymentData.amount || '0'}`}
             </Button>
           </div>
         </form>

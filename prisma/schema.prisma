@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Donor {
+  id            String     @id @default(cuid())
+  firstName     String
+  lastName      String
+  email         String     @unique
+  phone         String?
+  billingAddress String?
+  city          String?
+  zipCode       String?
+  country       String?
+  status        String     @default("Active") // Active, Inactive
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  donations     Donation[]
+
+  @@map("donors")
+}
+
+model Donation {
+  id            String     @id @default(cuid())
+  amount        Decimal    @db.Decimal(10, 2)
+  currency      String     @default("USD")
+  message       String?
+  paymentStatus String     @default("Pending") // Pending, Completed, Failed
+  paymentMethod String?    // Card, PayPal, etc.
+  transactionId String?   @unique
+  donorId       String
+  donor         Donor      @relation(fields: [donorId], references: [id], onDelete: Cascade)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("donations")
+}
+
+model ScholarshipApplication {
+  id                String   @id @default(cuid())
+  applicationType   String   // "scholarship-help" or "direct-sponsorship"
+  firstName         String
+  lastName          String
+  email             String
+  phone             String?
+  dateOfBirth       DateTime?
+  currentSchool     String
+  academicLevel     String   // High School, Undergraduate, Graduate, Postgraduate
+  gpa               Decimal? @db.Decimal(3, 2)
+  intendedMajor     String?
+  financialNeed     String   @db.Text
+  essay             String   @db.Text
+  additionalInfo    String?  @db.Text
+  status            String   @default("Pending") // Pending, Replied, Approved, Rejected
+  requestedAmount   Decimal? @db.Decimal(10, 2)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("scholarship_applications")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Should be hashed in production
+  name      String?
+  role      String   @default("admin") // admin, super_admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+

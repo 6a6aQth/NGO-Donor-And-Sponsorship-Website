@@ -25,95 +25,68 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-// Mock data - in a real app, this would come from your database
-const mockDonors = [
-  {
-    id: 1,
-    name: "John Smith",
-    email: "john@example.com",
-    phone: "+1-555-0123",
-    totalDonations: 2500,
-    lastDonation: "2024-01-15",
-    donationCount: 5,
-    status: "Active"
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah@example.com", 
-    phone: "+1-555-0456",
-    totalDonations: 1800,
-    lastDonation: "2024-01-10",
-    donationCount: 3,
-    status: "Active"
-  },
-  {
-    id: 3,
-    name: "Michael Brown",
-    email: "michael@example.com",
-    phone: "+1-555-0789",
-    totalDonations: 5000,
-    lastDonation: "2023-12-20",
-    donationCount: 8,
-    status: "Active"
-  }
-]
-
-const mockRequests = [
-  {
-    id: 1,
-    name: "Emily Davis",
-    email: "emily@example.com",
-    type: "Direct Sponsorship",
-    date: "2024-01-20",
-    status: "Pending",
-    amount: 2000,
-    academicLevel: "Undergraduate"
-  },
-  {
-    id: 2,
-    name: "David Wilson",
-    email: "david@example.com",
-    type: "Scholarship Help",
-    date: "2024-01-18",
-    status: "Replied",
-    amount: 0,
-    academicLevel: "High School"
-  },
-  {
-    id: 3,
-    name: "Lisa Garcia",
-    email: "lisa@example.com",
-    type: "Direct Sponsorship",
-    date: "2024-01-15",
-    status: "Pending",
-    amount: 1500,
-    academicLevel: "Graduate"
-  }
-]
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState("")
-  const [donors, setDonors] = useState(mockDonors)
-  const [requests, setRequests] = useState(mockRequests)
+  const [donors, setDonors] = useState<any[]>([])
+  const [requests, setRequests] = useState<any[]>([])
+  const [stats, setStats] = useState({
+    totalDonations: 0,
+    totalDonors: 0,
+    totalRequests: 0,
+    pendingRequests: 0,
+  })
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterType, setFilterType] = useState("all")
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     // Check if already authenticated (in a real app, use proper session management)
     const authStatus = sessionStorage.getItem('admin_authenticated')
     if (authStatus === 'true') {
       setIsAuthenticated(true)
+      fetchData()
     }
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const fetchData = async () => {
+    setIsLoading(true)
+    try {
+      // Fetch stats
+      const statsResponse = await fetch('/api/admin/stats')
+      const statsData = await statsResponse.json()
+      if (statsData.success) {
+        setStats(statsData.stats)
+      }
+
+      // Fetch donors
+      const donorsResponse = await fetch('/api/admin/donors')
+      const donorsData = await donorsResponse.json()
+      if (donorsData.success) {
+        setDonors(donorsData.donors)
+      }
+
+      // Fetch requests
+      const requestsResponse = await fetch('/api/admin/requests')
+      const requestsData = await requestsResponse.json()
+      if (requestsData.success) {
+        setRequests(requestsData.requests)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (password === "1234") {
       setIsAuthenticated(true)
       sessionStorage.setItem('admin_authenticated', 'true')
+      await fetchData()
     } else {
       alert("Incorrect password")
     }
@@ -125,23 +98,45 @@ export default function AdminDashboard() {
     setPassword("")
   }
 
-  const updateRequestStatus = (id: number, status: string) => {
-    setRequests(prev => prev.map(req => 
-      req.id === id ? { ...req, status } : req
-    ))
+  const updateRequestStatus = async (id: string, status: string) => {
+    try {
+      const response = await fetch('/api/admin/requests', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, status }),
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        setRequests(prev => prev.map(req => 
+          req.id === id ? { ...req, status } : req
+        ))
+        // Refresh stats
+        const statsResponse = await fetch('/api/admin/stats')
+        const statsData = await statsResponse.json()
+        if (statsData.success) {
+          setStats(statsData.stats)
+        }
+      }
+    } catch (error) {
+      console.error('Error updating request status:', error)
+      alert('Failed to update request status')
+    }
   }
 
   const exportDonorsCSV = () => {
     const csvContent = [
       ["Name", "Email", "Phone", "Total Donations", "Last Donation", "Donation Count", "Status"],
       ...donors.map(donor => [
-        donor.name,
-        donor.email,
-        donor.phone,
-        donor.totalDonations,
-        donor.lastDonation,
-        donor.donationCount,
-        donor.status
+        donor.name || '',
+        donor.email || '',
+        donor.phone || '',
+        donor.totalDonations || 0,
+        donor.lastDonation || '',
+        donor.donationCount || 0,
+        donor.status || ''
       ])
     ].map(row => row.join(",")).join("\n")
     
@@ -158,13 +153,13 @@ export default function AdminDashboard() {
     const csvContent = [
       ["Name", "Email", "Type", "Date", "Status", "Amount", "Academic Level"],
       ...requests.map(req => [
-        req.name,
-        req.email,
-        req.type,
-        req.date,
-        req.status,
-        req.amount,
-        req.academicLevel
+        req.name || '',
+        req.email || '',
+        req.type || '',
+        req.date || '',
+        req.status || '',
+        req.amount || 0,
+        req.academicLevel || ''
       ])
     ].map(row => row.join(",")).join("\n")
     
@@ -178,22 +173,22 @@ export default function AdminDashboard() {
   }
 
   const filteredDonors = donors.filter(donor => {
-    const matchesSearch = donor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         donor.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const name = donor.name || ''
+    const email = donor.email || ''
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = filterStatus === "all" || donor.status === filterStatus
     return matchesSearch && matchesStatus
   })
 
   const filteredRequests = requests.filter(request => {
-    const matchesSearch = request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         request.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const name = request.name || ''
+    const email = request.email || ''
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesType = filterType === "all" || request.type === filterType
     return matchesSearch && matchesType
   })
-
-  const totalDonations = donors.reduce((sum, donor) => sum + donor.totalDonations, 0)
-  const totalRequests = requests.length
-  const pendingRequests = requests.filter(req => req.status === "Pending").length
 
   if (!isAuthenticated) {
     return (
@@ -247,52 +242,67 @@ export default function AdminDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Analytics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <DollarSign className="h-8 w-8 text-green-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Donations</p>
-                  <p className="text-2xl font-bold">${totalDonations.toLocaleString()}</p>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardContent className="p-6">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <DollarSign className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Total Donations</p>
+                    <p className="text-2xl font-bold">${stats.totalDonations.toLocaleString()}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Users className="h-8 w-8 text-blue-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Donors</p>
-                  <p className="text-2xl font-bold">{donors.length}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Users className="h-8 w-8 text-blue-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Total Donors</p>
+                    <p className="text-2xl font-bold">{stats.totalDonors}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <FileText className="h-8 w-8 text-purple-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Requests</p>
-                  <p className="text-2xl font-bold">{totalRequests}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <FileText className="h-8 w-8 text-purple-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Total Requests</p>
+                    <p className="text-2xl font-bold">{stats.totalRequests}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Clock className="h-8 w-8 text-orange-600" />
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Pending Requests</p>
-                  <p className="text-2xl font-bold">{pendingRequests}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center">
+                  <Clock className="h-8 w-8 text-orange-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-600">Pending Requests</p>
+                    <p className="text-2xl font-bold">{stats.pendingRequests}</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="donors" className="space-y-6">
@@ -463,6 +473,7 @@ export default function AdminDashboard() {
                               variant="outline"
                               onClick={() => updateRequestStatus(request.id, "Replied")}
                               disabled={request.status === "Replied"}
+                              title="Mark as Replied"
                             >
                               <CheckCircle className="h-4 w-4" />
                             </Button>

@@ -14,6 +14,8 @@ interface ScholarshipFormProps {
 
 export function ScholarshipForm({ children }: ScholarshipFormProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     applicationType: "",
     firstName: "",
@@ -34,27 +36,51 @@ export function ScholarshipForm({ children }: ScholarshipFormProps) {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement form submission logic
-    console.log("Scholarship application submitted:", formData)
-    setIsOpen(false)
-    // Reset form
-    setFormData({
-      applicationType: "",
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      dateOfBirth: "",
-      currentSchool: "",
-      academicLevel: "",
-      gpa: "",
-      intendedMajor: "",
-      financialNeed: "",
-      essay: "",
-      additionalInfo: ""
-    })
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/scholarships', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit application')
+      }
+
+      // Success
+      alert("Application submitted successfully! We'll review your application and get back to you soon.")
+      setIsOpen(false)
+      // Reset form
+      setFormData({
+        applicationType: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        dateOfBirth: "",
+        currentSchool: "",
+        academicLevel: "",
+        gpa: "",
+        intendedMajor: "",
+        financialNeed: "",
+        essay: "",
+        additionalInfo: ""
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
+      console.error('Scholarship application error:', err)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -273,13 +299,20 @@ export function ScholarshipForm({ children }: ScholarshipFormProps) {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+
           {/* Submit Button */}
           <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setIsOpen(false)} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-primary hover:bg-primary/90">
-              Submit Application
+            <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </Button>
           </div>
         </form>
